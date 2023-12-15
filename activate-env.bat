@@ -20,6 +20,13 @@ call ".venv\Scripts\activate"
 :: Jump to skip_activate if venv is already active
 :SKIP_ACTIVATE
 
+:: Check for '-g' argument and create .gitignore if needed
+IF "%1"=="-g" (
+    IF NOT EXIST ".gitignore" (
+        echo Creating .gitignore file
+        copy C:\Users\n529634\scripts\gitignore-templates\python.gitignore .gitignore
+    )
+)
 
 :: Add .venv to gitignore if it is not present
 IF EXIST ".gitignore" (
@@ -35,6 +42,5 @@ IF EXIST ".gitignore" (
     )
     ENDLOCAL
 ) ELSE (
-    echo .gitignore not found
+    echo .gitignore not present
 )
-
