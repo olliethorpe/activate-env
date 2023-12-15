@@ -1,27 +1,40 @@
 @echo off
+
+:: Create .venv if it doesn't exist
+IF NOT EXIST ".venv\" (
+    echo Creating virtual environment from .venv folder.
+    python -m venv .venv
+)
+
+:: Active venv if not active
+:::: Only interact with VIRTUAL_ENV in local
 SETLOCAL
-
-:: Check if a .venv folder exists
-IF EXIST ".venv\" (
-    echo Activating virtual environment from .venv folder.
-    call ".venv\Scripts\activate"
-    GOTO EndScript
-)
-
-:: Get the name of the current directory and replace '_' with '-'
-FOR %%I IN (.) DO SET "CURRENT_DIR_NAME=%%~nxI"
-SET "VENV_NAME=.%CURRENT_DIR_NAME:_=-%-venv"
-
-:: Check if a virtual environment already exists
-IF EXIST "%VENV_NAME%" (
-    echo Activating existing virtual environment: %VENV_NAME%
+IF DEFINED VIRTUAL_ENV (
+    echo virtual environment is already active.
+    GOTO SKIP_ACTIVATE
 ) ELSE (
-    echo Creating and activating new virtual environment: %VENV_NAME%
-    python -m venv "%VENV_NAME%"
+    echo Activating virtual environment.
+)
+ENDLOCAL
+call ".venv\Scripts\activate"
+:: Jump to skip_activate if venv is already active
+:SKIP_ACTIVATE
+
+
+:: Add .venv to gitignore if it is not present
+IF EXIST ".gitignore" (
+    SETLOCAL EnableDelayedExpansion
+    SET FOUND=0
+    FOR /f "delims=" %%i IN ('findstr /l ".venv" .gitignore') DO SET FOUND=1
+    IF !FOUND! EQU 0 (
+        echo adding .venv to .gitignore
+        echo.>> .gitignore
+        echo .venv >> .gitignore
+    ) ELSE (
+        echo .venv in .gitignore
+    )
+    ENDLOCAL
+) ELSE (
+    echo .gitignore not found
 )
 
-:: Activate the virtual environment
-call "%VENV_NAME%\Scripts\activate"
-
-:EndScript
-ENDLOCAL
