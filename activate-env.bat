@@ -27,8 +27,10 @@ call ".venv\Scripts\activate"
 IF "%~1"=="" GOTO END
 IF "%~1"=="-g" GOTO HANDLE_GITIGNORE
 IF "%~1"=="-r" GOTO HANDLE_REQUIREMENTS
+IF "%~1"=="--recursive" GOTO HANDLE_REQUIREMENTS_RECURSIVE
 SHIFT
 GOTO PARSE_ARGUMENTS
+
 
 :HANDLE_GITIGNORE
 :: Handle .gitignore creation or modification
@@ -55,6 +57,7 @@ IF EXIST ".gitignore" (
 )
 GOTO NEXT_ARGUMENT
 
+
 :HANDLE_REQUIREMENTS
 :: Handle requirements installation
 IF EXIST "requirements.txt" (
@@ -66,8 +69,31 @@ IF EXIST "requirements.txt" (
 )
 GOTO NEXT_ARGUMENT
 
+
+:HANDLE_REQUIREMENTS_RECURSIVE
+
+echo collecting requirements recursively
+python C:\Users\n529634\scripts\src-python\get_requirements.py %cd% > C:\Users\n529634\scripts\requirements\tmp_req.txt
+
+type C:\Users\n529634\scripts\requirements\tmp_req.txt
+echo Do you want to install requirements above requirements? [y/n]
+set /p USERINPUT=
+
+IF /I "!USERINPUT!"=="y" (
+    python -m pip install -r tmp_req.txt
+) ELSE (
+    echo Installation aborted.
+)
+
+del C:\Users\n529634\scripts\requirements\tmp_req.txt
+
+
+GOTO NEXT_ARGUMENT
+
 :NEXT_ARGUMENT
 SHIFT
 GOTO PARSE_ARGUMENTS
 
 :END
+
+::TODO: Use %~dp0 instead of explicit path
