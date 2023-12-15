@@ -20,7 +20,8 @@ call ".venv\Scripts\activate"
 :: Jump to skip_activate if venv is already active
 :SKIP_ACTIVATE
 
-:: Check for '-g' argument and create .gitignore if needed
+
+:: Check for '-g' argument and create .gitignore if needed or just add .venv if it's not present
 IF "%1"=="-g" (
     IF NOT EXIST ".gitignore" (
         echo Creating .gitignore file
@@ -33,7 +34,7 @@ IF "%1"=="-g" (
         SET FOUND=0
         FOR /f "delims=" %%i IN ('findstr /l ".venv" .gitignore') DO SET FOUND=1
         IF !FOUND! EQU 0 (
-            echo adding .venv to .gitignore
+            echo adding '.venv' to .gitignore
             echo.>> .gitignore
             echo .venv >> .gitignore
         ) ELSE (
@@ -42,5 +43,15 @@ IF "%1"=="-g" (
         ENDLOCAL
     ) ELSE (
         echo .gitignore not present
+    )
+)
+
+IF "%2"=="-r" (
+    IF EXIST "requirements.txt" (
+        echo installing requirements from requirements.txt
+        python -m pip install --upgrade pip
+        python -m pip install -r requirements.txt
+    ) ELSE (
+        echo could not find requirements.txt
     )
 )
