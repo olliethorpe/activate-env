@@ -26,21 +26,21 @@ IF "%1"=="-g" (
         echo Creating .gitignore file
         copy C:\Users\n529634\scripts\gitignore-templates\python.gitignore .gitignore
     )
-)
 
-:: Add .venv to gitignore if it is not present
-IF EXIST ".gitignore" (
-    SETLOCAL EnableDelayedExpansion
-    SET FOUND=0
-    FOR /f "delims=" %%i IN ('findstr /l ".venv" .gitignore') DO SET FOUND=1
-    IF !FOUND! EQU 0 (
-        echo adding .venv to .gitignore
-        echo.>> .gitignore
-        echo .venv >> .gitignore
+    :: Add .venv to gitignore if it is not present
+    IF EXIST ".gitignore" (
+        SETLOCAL EnableDelayedExpansion
+        SET FOUND=0
+        FOR /f "delims=" %%i IN ('findstr /l ".venv" .gitignore') DO SET FOUND=1
+        IF !FOUND! EQU 0 (
+            echo adding .venv to .gitignore
+            echo.>> .gitignore
+            echo .venv >> .gitignore
+        ) ELSE (
+            echo .venv in .gitignore
+        )
+        ENDLOCAL
     ) ELSE (
-        echo .venv in .gitignore
+        echo .gitignore not present
     )
-    ENDLOCAL
-) ELSE (
-    echo .gitignore not present
 )
