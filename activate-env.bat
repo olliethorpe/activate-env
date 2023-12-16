@@ -1,4 +1,12 @@
+:: Activate-Env.bat
 @echo off
+
+:: List functionality
+IF "%~1"=="-l" (
+    type "%~dp0\documentation\commands.txt"
+    GOTO END
+)
+
 
 :: Create .venv if it doesn't exist
 IF NOT EXIST ".venv\" (
@@ -21,13 +29,12 @@ call ".venv\Scripts\activate"
 :SKIP_ACTIVATE
 
 
-
 :: Iterate through arguments
 :PARSE_ARGUMENTS
 IF "%~1"=="" GOTO END
 IF "%~1"=="-g" GOTO HANDLE_GITIGNORE
 IF "%~1"=="-r" GOTO HANDLE_REQUIREMENTS
-IF "%~1"=="--recursive" GOTO HANDLE_REQUIREMENTS_RECURSIVE
+IF "%~1"=="-re" GOTO HANDLE_REQUIREMENTS_RECURSIVELY
 SHIFT
 GOTO PARSE_ARGUMENTS
 
@@ -36,7 +43,7 @@ GOTO PARSE_ARGUMENTS
 :: Handle .gitignore creation or modification
 IF NOT EXIST ".gitignore" (
     echo Creating .gitignore file
-    copy C:\Users\n529634\scripts\gitignore-templates\python.gitignore .gitignore
+    copy "%~dp0\gitignore-templates\python.gitignore" .gitignore
 )
 
 :: Add .venv to gitignore if it is not present
@@ -70,12 +77,11 @@ IF EXIST "requirements.txt" (
 GOTO NEXT_ARGUMENT
 
 
-:HANDLE_REQUIREMENTS_RECURSIVE
-
+:HANDLE_REQUIREMENTS_RECURSIVELY
 echo collecting requirements recursively
-python C:\Users\n529634\scripts\src-python\get_requirements.py %cd% > C:\Users\n529634\scripts\requirements\tmp_req.txt
+python "%~dp0\src-python\get_requirements.py" %cd% > "%~dp0\requirements\tmp_req.txt"
 
-type C:\Users\n529634\scripts\requirements\tmp_req.txt
+type "%~dp0\requirements\tmp_req.txt"
 echo Do you want to install requirements above requirements? [y/n]
 set /p USERINPUT=
 
@@ -84,10 +90,7 @@ IF /I "!USERINPUT!"=="y" (
 ) ELSE (
     echo Installation aborted.
 )
-
-del C:\Users\n529634\scripts\requirements\tmp_req.txt
-
-
+del "%~dp0\requirements\tmp_req.txt"
 GOTO NEXT_ARGUMENT
 
 :NEXT_ARGUMENT
@@ -97,3 +100,4 @@ GOTO PARSE_ARGUMENTS
 :END
 
 ::TODO: Use %~dp0 instead of explicit path
+::TODO: create list functionality
