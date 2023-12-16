@@ -115,5 +115,5 @@ GOTO PARSE_ARGUMENTS
 
 :END
 
-::TODO: Use %~dp0 instead of explicit path
-::TODO: create list functionality
+:: Create Bash functionality
+:: Create Deactivate script
