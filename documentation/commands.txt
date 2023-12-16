@@ -1,0 +1,22 @@
+############################################################
+#                      COMMANDS LIST                       #
+############################################################
+
+# -l: List Available Commands
+#     Displays this list of commands.
+
+# -g: Create or modify .gitignore
+#     Creates or modifies a .gitignore file. Adds '.venv'
+#     to .gitignore if not already present.
+
+# -r: Install Requirements
+#     Installs packages from requirements.txt.
+
+# -re: Install Recursive Requirements
+#     Collects and installs requirements recursively from
+#     the specified directory.
+
+############################################################
+# NOTE: Some commands may rely on specific file paths and  #
+# configurations. Adjust as necessary for your environment.#
+############################################################
