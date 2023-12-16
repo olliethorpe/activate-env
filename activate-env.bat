@@ -10,25 +10,41 @@ IF "%~1"=="-l" (
 
 :: Create .venv if it doesn't exist
 IF NOT EXIST ".venv\" (
-    echo Creating virtual environment from .venv folder.
+    echo Creating virtual environment...
     python -m venv .venv
 )
 
 :: Activate virtual env if not active
-:::: Only interact with VIRTUAL_ENV variable in local
-SETLOCAL
+:: Only interact with VIRTUAL_ENV variable in local
+:: EnableDelayedExpansion allows vars to be used in same code block
+SETLOCAL EnableDelayedExpansion
+
 IF DEFINED VIRTUAL_ENV (
-    echo virtual environment is already active.
-    GOTO SKIP_ACTIVATE
+    IF NOT "%VIRTUAL_ENV%"=="%cd%\.venv" (
+        echo Active virtual environment is not from this directory.
+        echo "%VIRTUAL_ENV%"
+        echo Would you like to change? [Y/N]
+        set /p USERINPUT=
+
+        :: /I makes case insensitive
+        IF /I "!USERINPUT!"=="Y" (
+            ENDLOCAL
+            echo Deactivating current virtual environment...
+            call "%VIRTUAL_ENV%\Scripts\deactivate.bat"
+            echo Activating virtual environment from this directory...
+            call "%cd%\.venv\Scripts\activate"
+        ) ELSE (
+            echo Virtual environment unchanged.
+        )
+    ) ELSE (
+        echo Virtual environment from this directory is already active.
+    )
 ) ELSE (
-    echo Activating virtual environment.
+    echo No virtual environment active. Activating virtual environment from this directory...
+    call "%cd%\.venv\Scripts\activate"
 )
-ENDLOCAL
-call ".venv\Scripts\activate"
-:: Jump to skip_activate if venv is already active
-:SKIP_ACTIVATE
 
-
+:::: Anything after this will not be executed unless marked and referenced above ::::
 :: Iterate through arguments
 :PARSE_ARGUMENTS
 IF "%~1"=="" GOTO END
@@ -82,10 +98,10 @@ echo collecting requirements recursively
 python "%~dp0\src-python\get_requirements.py" %cd% > "%~dp0\requirements\tmp_req.txt"
 
 type "%~dp0\requirements\tmp_req.txt"
-echo Do you want to install requirements above requirements? [y/n]
+echo Do you want to install requirements above requirements? [Y/N]
 set /p USERINPUT=
 
-IF /I "!USERINPUT!"=="y" (
+IF /I "!USERINPUT!"=="Y" (
     python -m pip install -r tmp_req.txt
 ) ELSE (
     echo Installation aborted.
