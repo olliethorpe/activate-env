@@ -1,18 +1,16 @@
-import sys
-import pathlib
+import sys  # Default lib, no pip install required
+import pathlib  # Default lib, no pip install required
 
 ROOT_DIR = sys.argv[1]
 
 root = pathlib.Path(ROOT_DIR)
 
 list(root.rglob('requirements.txt'))
+
 # recursivley search for requirements.txt files
 files = list(root.rglob('requirements.txt'))
 
-
-
 # concatonate their contents and return as a string
-
 extracted_requirements = []
 for file in files:
     extracted_requirements.extend(file.read_text().split('\n'))
