@@ -12,9 +12,12 @@
 # -r: Install Requirements
 #     Installs packages from requirements.txt.
 
-# -re: Install Recursive Requirements
-#     Collects and installs requirements recursively from
-#     the specified directory.
+# -re: Finad Requirements Recursively and Install
+#     Collects and installs requirements recursively 
+#     starting at the root directory.
+
+# Calling without any commands will activate (and/or create)
+# a virtual environment in the current working directory.
 
 ############################################################
 # NOTE: Some commands may rely on specific file paths and  #
