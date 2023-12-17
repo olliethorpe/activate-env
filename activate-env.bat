@@ -1,6 +1,7 @@
 :: Activate-Env.bat
 @echo off
 
+
 :: List functionality
 IF "%~1"=="-l" (
     type "%~dp0\documentation\commands.txt"
@@ -14,11 +15,11 @@ IF NOT EXIST ".venv\" (
     python -m venv .venv
 )
 
-:: Activate virtual env if not active
+
 :: Only interact with VIRTUAL_ENV variable in local
 :: EnableDelayedExpansion allows vars to be used in same code block
 SETLOCAL EnableDelayedExpansion
-
+:: Activate virtual env if not active
 IF DEFINED VIRTUAL_ENV (
     IF NOT "%VIRTUAL_ENV%"=="%cd%\.venv" (
         echo Active virtual environment is not from this directory.
@@ -47,6 +48,7 @@ IF DEFINED VIRTUAL_ENV (
 :::: Anything after this will not be executed unless marked and referenced above ::::
 :: Iterate through arguments
 :PARSE_ARGUMENTS
+echo "%~1"
 IF "%~1"=="" GOTO END
 IF "%~1"=="-g" GOTO HANDLE_GITIGNORE
 IF "%~1"=="-r" GOTO HANDLE_REQUIREMENTS
@@ -59,7 +61,7 @@ GOTO PARSE_ARGUMENTS
 :: Handle .gitignore creation or modification
 IF NOT EXIST ".gitignore" (
     echo Creating .gitignore file
-    copy "%~dp0\gitignore-templates\python.gitignore" .gitignore
+    copy "%~dp0gitignore-templates\python.gitignore" .gitignore
 )
 
 :: Add .venv to gitignore if it is not present
@@ -117,3 +119,4 @@ GOTO PARSE_ARGUMENTS
 
 :: Create Bash functionality
 :: Create Deactivate script
+:: Add background upgrade / update of pip and virtualenv
