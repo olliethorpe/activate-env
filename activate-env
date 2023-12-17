@@ -1,0 +1,105 @@
+#!/bin/bash
+
+create_venv() {
+    if [ ! -d ".venv" ]; then
+        echo "Creating virtual environment..."
+        python -m venv .venv
+    fi
+}
+
+# Function to activate virtual environment
+activate_env() {
+    WD=$(echo "$PWD" | sed -e 's/^\/c/C:/; s/\//\\\\/g')
+    if [[ -n "$VIRTUAL_ENV" && "$VIRTUAL_ENV" != "$WD\.venv" ]]; then
+        echo "Active virtual environment is not from this directory."
+        echo "Current environment: $VIRTUAL_ENV"
+        echo "Would you like to switch? [Y/N]"
+        read -r USERINPUT
+
+        if [[ "$USERINPUT" =~ ^[Yy]$ ]]; then
+            echo "Deactivating current virtual environment..."
+            deactivate
+            echo "Activating virtual environment from this directory..."
+            source "$WD\.venv\Scripts\activate"
+        else
+            echo "Virtual environment unchanged."
+        fi
+    elif [[ -z "$VIRTUAL_ENV" ]]; then
+        echo "No virtual environment active. Activating virtual environment from this directory..."
+        DIR="${WD}\\\\.venv\\\\Scripts\\\\activate"
+        $(source $DIR)
+    else
+        echo "Virtual environment from this directory is already active."
+    fi
+}
+
+# Function to handle gitignore
+handle_gitignore() {
+    if [[ ! -f ".gitignore" ]]; then
+        echo "Creating .gitignore file"
+        cp "$(dirname "$BASH_SOURCE")/gitignore-templates/python.gitignore" .gitignore
+    fi
+
+    if grep -q ".venv" .gitignore; then
+        echo ".venv in .gitignore"
+    else
+        echo "adding '.venv' to .gitignore"
+        echo "" >> .gitignore
+        echo ".venv" >> .gitignore
+    fi
+}
+
+# Function to handle requirements
+handle_requirements() {
+    if [[ -f "requirements.txt" ]]; then
+        echo "installing requirements from requirements.txt"
+        python -m pip install --upgrade pip
+        python -m pip install -r requirements.txt
+    else
+        echo "could not find requirements.txt"
+    fi
+}
+
+# Function to handle requirements recursively
+handle_requirements_recursively() {
+    echo "collecting requirements recursively"
+    python "$(dirname "$BASH_SOURCE")/src-python/get_requirements.py" "$PWD" > "$(dirname "$BASH_SOURCE")/requirements/tmp_req.txt"
+
+    cat "$(dirname "$BASH_SOURCE")/requirements/tmp_req.txt"
+    echo "Do you want to install the above requirements? [Y/N]"
+    read -r USERINPUT
+
+    if [[ "$USERINPUT" =~ ^[Yy]$ ]]; then
+        python -m pip install -r "$(dirname "$BASH_SOURCE")/requirements/tmp_req.txt"
+    else
+        echo "Installation aborted."
+    fi
+    rm "$(dirname "$BASH_SOURCE")/requirements/tmp_req.txt"
+}
+
+# Main script logic
+# List functionality
+if [[ "$1" == "-l" ]]; then
+    cat "$(dirname "$BASH_SOURCE")/documentation/commands.txt"
+    exit 0
+fi
+
+create_venv
+activate_env
+
+# Process each command-line argument
+while [[ "$#" -gt 0 ]]; do
+    case "$1" in
+        -g)
+            handle_gitignore
+            ;;
+        -r)
+            handle_requirements
+            ;;
+        -re)
+            handle_requirements_recursively
+            ;;
+    esac
+    shift # Move to the next argument
+done
+
