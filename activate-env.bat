@@ -100,7 +100,7 @@ echo collecting requirements recursively
 python "%~dp0\src-python\get_requirements.py" %cd% > "%~dp0\requirements\tmp_req.txt"
 
 type "%~dp0\requirements\tmp_req.txt"
-echo Do you want to install requirements above requirements? [Y/N]
+echo Do you want to install the above requirements? [Y/N]
 set /p USERINPUT=
 
 IF /I "!USERINPUT!"=="Y" (
