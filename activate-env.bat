@@ -48,7 +48,7 @@ IF DEFINED VIRTUAL_ENV (
 :::: Anything after this will not be executed unless marked and referenced above ::::
 :: Iterate through arguments
 :PARSE_ARGUMENTS
-echo "%~1"
+echo "%~1" :: Testing
 IF "%~1"=="" GOTO END
 IF "%~1"=="-g" GOTO HANDLE_GITIGNORE
 IF "%~1"=="-r" GOTO HANDLE_REQUIREMENTS
