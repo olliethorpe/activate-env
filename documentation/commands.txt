@@ -16,10 +16,9 @@
 #     Collects and installs requirements recursively 
 #     starting at the root directory.
 
-# Script will always activate (and/or create)
-# a virtual environment in the current working directory.
+# Script will always activate/create a virtual
+# environment in the current working directory.
 
 ############################################################
-# NOTE: Some commands may rely on specific file paths and  #
-# configurations. Adjust as necessary for your environment.#
+#                                                          #
 ############################################################
