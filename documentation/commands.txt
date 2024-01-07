@@ -12,11 +12,11 @@
 # -r: Install Requirements
 #     Installs packages from requirements.txt.
 
-# -re: Finad Requirements Recursively and Install
+# -re: Find Requirements Recursively and Install
 #     Collects and installs requirements recursively 
 #     starting at the root directory.
 
-# Calling without any commands will activate (and/or create)
+# Script will always activate (and/or create)
 # a virtual environment in the current working directory.
 
 ############################################################
