@@ -11,7 +11,7 @@ create_venv() {
 activate_env() {
     WD=$(echo "$PWD" | sed -e 's/^\/c/C:/; s/\//\\/g')
     if [[ -n "$VIRTUAL_ENV" && "$VIRTUAL_ENV" != "$WD\.venv" ]]; then
-        echo "Active virtual environment is not from this directory."
+        echo "Active virtual environment is not from this directory..."
         echo "Current environment: $VIRTUAL_ENV"
         echo "Would you like to switch? [Y/N]"
         read -r USERINPUT
@@ -28,21 +28,21 @@ activate_env() {
         echo "No virtual environment active. Activating virtual environment from this directory..."
         source $WD/.venv/Scripts/activate
     else
-        echo "Virtual environment from this directory is already active."
+        echo "Virtual environment from this directory is already active..."
     fi
 }
 
 # Function to handle gitignore
 handle_gitignore() {
     if [[ ! -f ".gitignore" ]]; then
-        echo "Creating .gitignore file"
+        echo "Creating .gitignore file..."
         cp "$(dirname "$BASH_SOURCE")/gitignore-templates/python.gitignore" .gitignore
     fi
 
     if grep -q ".venv" .gitignore; then
-        echo ".venv in .gitignore"
+        echo ".venv in .gitignore..."
     else
-        echo "adding '.venv' to .gitignore"
+        echo "adding '.venv' to .gitignore..."
         echo "" >> .gitignore
         echo ".venv" >> .gitignore
     fi
@@ -51,18 +51,18 @@ handle_gitignore() {
 # Function to handle requirements
 handle_requirements() {
     if [[ -f "requirements.txt" ]]; then
-        echo "installing requirements from requirements.txt"
+        echo "installing requirements from requirements.txt..."
         python -m pip install --upgrade pip
         python -m pip install -r requirements.txt
     else
-        echo "could not find requirements.txt"
+        echo "could not find requirements.txt..."
     fi
 }
 
 # Function to handle requirements recursively
 # This is unneccessary, but an example of how a py script can be called
 handle_requirements_recursively() {
-    echo "collecting requirements recursively"
+    echo "collecting requirements recursively..."
     python "$(dirname "$BASH_SOURCE")/src-python/get_requirements.py" "$PWD" > "$(dirname "$BASH_SOURCE")/requirements/tmp_req.txt"
 
     cat "$(dirname "$BASH_SOURCE")/requirements/tmp_req.txt"
