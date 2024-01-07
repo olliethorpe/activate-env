@@ -40,7 +40,7 @@ handle_gitignore() {
     fi
 
     if grep -q ".venv" .gitignore; then
-        echo ".venv in .gitignore..."
+        echo "'.venv' already present in .gitignore..."
     else
         echo "adding '.venv' to .gitignore..."
         echo "" >> .gitignore
