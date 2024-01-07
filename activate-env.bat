@@ -8,23 +8,21 @@ IF "%~1"=="-l" (
     GOTO END
 )
 
-
 :: Create .venv if it doesn't exist
 IF NOT EXIST ".venv\" (
     echo Creating virtual environment...
     python -m venv .venv
 )
 
-
-:: Only interact with VIRTUAL_ENV variable in local
-:: EnableDelayedExpansion allows vars to be used in same code block
-SETLOCAL EnableDelayedExpansion
 :: Activate virtual env if not active
 IF DEFINED VIRTUAL_ENV (
     IF NOT "%VIRTUAL_ENV%"=="%cd%\.venv" (
-        echo Active virtual environment is not from this directory.
-        echo "%VIRTUAL_ENV%"
-        echo Would you like to change? [Y/N]
+        :: Only interact with VIRTUAL_ENV variable in local
+        :: EnableDelayedExpansion allows vars to be used in same code block
+        SETLOCAL EnableDelayedExpansion
+        echo Active virtual environment is not from this directory...
+        echo "Current environment: %VIRTUAL_ENV%"
+        echo Would you like to switch? [Y/N]
         set /p USERINPUT=
 
         :: /I makes case insensitive
@@ -35,20 +33,20 @@ IF DEFINED VIRTUAL_ENV (
             echo Activating virtual environment from this directory...
             call "%cd%\.venv\Scripts\activate"
         ) ELSE (
+            ENDLOCAL
             echo Virtual environment unchanged.
-        )
+        ) 
     ) ELSE (
-        echo Virtual environment from this directory is already active.
+        echo Virtual environment from this directory is already active...
     )
 ) ELSE (
     echo No virtual environment active. Activating virtual environment from this directory...
-    call "%cd%\.venv\Scripts\activate"
+    call "%cd%\.venv\Scripts\activate.bat"
 )
 
 :::: Anything after this will not be executed unless marked and referenced above ::::
 :: Iterate through arguments
 :PARSE_ARGUMENTS
-echo "%~1" :: Testing
 IF "%~1"=="" GOTO END
 IF "%~1"=="-g" GOTO HANDLE_GITIGNORE
 IF "%~1"=="-r" GOTO HANDLE_REQUIREMENTS
@@ -60,7 +58,7 @@ GOTO PARSE_ARGUMENTS
 :HANDLE_GITIGNORE
 :: Handle .gitignore creation or modification
 IF NOT EXIST ".gitignore" (
-    echo Creating .gitignore file
+    echo Creating .gitignore file...
     copy "%~dp0gitignore-templates\python.gitignore" .gitignore
 )
 
@@ -70,11 +68,11 @@ IF EXIST ".gitignore" (
     SET FOUND=0
     FOR /f "delims=" %%i IN ('findstr /l ".venv" .gitignore') DO SET FOUND=1
     IF !FOUND! EQU 0 (
-        echo adding '.venv' to .gitignore
+        echo adding '.venv' to .gitignore...
         echo.>> .gitignore
         echo .venv >> .gitignore
     ) ELSE (
-        echo .venv in .gitignore
+        echo '.venv' is already present in .gitignore...
     )
     ENDLOCAL
 ) ELSE (
@@ -86,11 +84,11 @@ GOTO NEXT_ARGUMENT
 :HANDLE_REQUIREMENTS
 :: Handle requirements installation
 IF EXIST "requirements.txt" (
-    echo installing requirements from requirements.txt
+    echo Installing requirements from requirements.txt...
     python -m pip install --upgrade pip
     python -m pip install -r requirements.txt
 ) ELSE (
-    echo could not find requirements.txt
+    echo Could not find requirements.txt...
 )
 GOTO NEXT_ARGUMENT
 
